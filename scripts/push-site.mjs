@@ -9,6 +9,6 @@ run(["config","user.name","Codex Sites"]);run(["config","user.email","sites@open
 run(["add","-A"]);run(["commit","-m","Build portal de oportunidades laborales"]);
 try{run(["remote","remove","sites"])}catch{}
 run(["remote","add","sites",input.remote]);
-const ask=join(process.cwd(),".git","sites-askpass.cmd");writeFileSync(ask,"@echo off\r\nif \"%1\"==\"Username for 'https://github.com': \" (echo x-access-token) else (echo %SITES_PUSH_TOKEN%)\r\n");
+const ask=join(process.cwd(),".git","sites-askpass.cmd");writeFileSync(ask,"@echo off\r\necho %1 | findstr /I \"Username\" >nul\r\nif %errorlevel%==0 (echo x-access-token) else (echo %SITES_PUSH_TOKEN%)\r\n");
 run(["push","sites",`HEAD:${input.branch||"main"}`,"--force"],{GIT_ASKPASS:ask,GIT_TERMINAL_PROMPT:"0",SITES_PUSH_TOKEN:input.token});
 unlinkSync(ask);console.log(JSON.stringify({commit_sha:run(["rev-parse","HEAD"])}));
